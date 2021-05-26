@@ -1,50 +1,31 @@
-def sum_items(*items): 
-    res = 0 
-    for item in items: 
-        res += item 
-    return res 
-  
-def make_sorted_tuple(*items): 
-    res = tuple(sorted([i for i in items]))
-    return res 
+def get_all_sums(a , b):
+    
+    def retrieve_items(*items):
+        return [a[i] for i in items]
 
-  
-def sum_to_k(list_of_ints , k): 
-    s = dict() 
-    less_than = set()
-    m = len(list_of_ints) 
-      
-    def get_sums(i , less_than): 
-        l = set()
-        e = set() 
-        if i == 1: 
-            for x in list_of_ints: 
-                if x < k: 
-                    l.add(make_sorted_tuple(x))
-                elif x == k: 
-                    #print(x)
-                    e.add(make_sorted_tuple(x))
-                else: 
-                    continue 
-            s[i] = e 
-            return l 
-        else: 
-            for x in less_than: 
-                y = [j for j in list_of_ints if j not in x] 
-                for n in y: 
-                    if sum_items(n , *x) < k: 
-                        l.add(make_sorted_tuple(n , *x))
-                    elif sum_items(n , *x) == k: 
-                        #print(n , x)
-                        e.add(make_sorted_tuple(n , *x))
-                    else: 
-                        continue 
-            s[i] = e 
-            return l
-            
-    for i in range(1 , m + 1): 
-        less_than = get_sums(i , less_than) 
-    return s
+    def build(lt , s):
+        pos = lt[-1] + 1
+        if a[pos:] == []:
+            return 
+        else:
+            while pos < len(a):
+                if s + a[pos] < b:
+                    yield from build(lt + [pos] , s + a[pos])
+                    pos += 1
+                elif s + a[pos] == b:
+                    yield retrieve_items(*lt , pos)
+                    pos += 1 
+                else:
+                    pos += 1
+
+    for i in range(0 , len(a)):
+        # index of each singular element in the list
+        if a[i] < b:
+            yield from build([i] , a[i])
+        elif a[i] == b:
+            yield a[i]
+        else:
+            continue
   
       
   
